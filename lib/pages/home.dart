@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:mass_qr/pages/chartType.dart';
 import 'package:mass_qr/pages/export.dart';
 import 'package:provider/provider.dart';
 import 'package:path_provider/path_provider.dart';
@@ -17,8 +18,19 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
+  List<String>  ChartsList = ["PieChart","VerticalBar","HorizontalBar"];
+  List<Icon>iconList   = [Icon(Icons.pie_chart,size: 35,),Icon(Icons.bar_chart,size: 35,),Icon(Icons.bar_chart,size: 35,)];
+
+
+  int currentChartType=0;
+  var dropdownValue = "PieChart" ;
+
+
   @override
   Widget build(BuildContext context) {
+
+
     return Scaffold(
       appBar: AppBar(
         title: Text('MultiQR'),
@@ -148,7 +160,7 @@ class _HomePageState extends State<HomePage> {
                          child: Image(image: AssetImage('assets/empty_state.png'))
                          )
                   :
-                  Expanded(
+                  /*Expanded(
                         child: ListView(
                           children: scans.scans
                               .map(
@@ -161,7 +173,160 @@ class _HomePageState extends State<HomePage> {
                               .toList(),
                           shrinkWrap: true,
                         ),
+                      )*/
+
+                      Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 25),
+                            child: Column(
+                              children: [
+                                Container(
+                                  height: 110,
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(padding:const EdgeInsets.only(top: 7,left: 10,bottom: 15),child: Text("Chart type",style: TextStyle(color: Colors.black87,fontSize: 16),)),
+                                      Padding(
+                                        padding: const EdgeInsets.only(left: 10),
+                                        child: Container(
+                                          height: 60,
+                                          width: double.infinity,
+                                          decoration: BoxDecoration(
+                                            color: Colors.black.withOpacity(0.1),
+                                            borderRadius: BorderRadius.circular(12)
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              Padding(padding:const EdgeInsets.symmetric(horizontal: 9),child: iconList[currentChartType]),
+                                              Expanded(
+                                                child: DropdownButton<dynamic>(
+                                                  // isDense: true,
+                                                  //focusNode: FocusNode(),
+                                                  underline: DropdownButtonHideUnderline(child: SizedBox(),),
+                                                  borderRadius: BorderRadius.all(Radius.circular(12)),
+                                                  isExpanded: true,
+                                                  value: dropdownValue,
+                                                  icon: Icon(Icons.arrow_drop_down, size: 35),
+                                                  elevation: 0,
+                                                  style: TextStyle(color: Colors.black, fontSize: 16),
+
+                                                  onChanged: (value) {
+                                                    // This is called when the user selects an item.
+                                                    setState(() {
+                                                      dropdownValue = value!;
+                                                      currentChartType=ChartsList.indexOf(value);
+                                                      print("----------**********__________");
+                                                      // print(dropdownValue);
+
+                                                    });
+                                                  },
+                                                  onTap: () {
+                                                    dropdownValue;
+                                                  },
+                                                  items: ChartsList.map((dynamic value) {
+                                                    return DropdownMenuItem(
+                                                      value: value,
+                                                      child: ListTile(
+                                                        // leading:iconList[currentChartType],
+                                                        title:  Text(value,style: TextStyle(color: Colors.black87,fontSize: 25),),
+                                                        // trailing: Icon(Icons.arrow_drop_down,size: 38),
+                                                      ),
+                                                    );
+                                                  }).toList(),
+                                                ),
+                                              ),
+
+                                            ],
+                                          )
+
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(height: 5,),
+
+                                Container(
+                                  height: 270,
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white
+                                  ),
+                                  child: Scrollbar(
+                                   thumbVisibility: true,
+                                    radius: Radius.circular(3),
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(right: 9),
+                                      child: Column(
+                                       crossAxisAlignment:CrossAxisAlignment.start,
+                                        children: [
+                                          Padding(padding:const EdgeInsets.only(top: 5,left: 5,bottom: 15),child: Text("SUGGESTED",style: TextStyle(color: Colors.black87,fontSize: 16,fontWeight: FontWeight.bold))),
+                                          Expanded(
+                                            child: GridView.builder(
+                                              shrinkWrap: true,
+                                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                                crossAxisCount: 2,
+                                                mainAxisSpacing: 3,
+                                                crossAxisSpacing: 3),
+                                                itemCount: ChartTypes().chartType.length,
+                                                itemBuilder: (context,index){
+
+                                                  // return ChartTypes().chartType[index];
+                                                  return GestureDetector(
+                                                    onTap: (){
+                                                      setState(() {
+                                                        currentChartType=index;
+                                                        print("8888888888888888888888888888");
+                                                        print(currentChartType);
+                                                      });
+                                                    },
+                                                    child: Container(
+                                                        height: 110,
+                                                        width: 150,
+                                                        decoration: BoxDecoration(
+                                                        color: Colors.white,
+                                                        border: Border.fromBorderSide(BorderSide(color: Colors.black.withOpacity(0.2),width: 4))
+                                                    ),
+                                                    child:ChartTypes().chartType[index]
+                                                    ),
+                                                  );
+                                                }
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      if(scans.scans.length > 0) Divider(color: Colors.black.withOpacity(0.7),),
+
+                      if(scans.scans.length > 0)
+                      Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(padding:const EdgeInsets.only(top: 5,left: 5),child: Text("Count",style: TextStyle(color: Colors.black87,fontSize: 23),)),
+                          Container(
+                            height: 110,
+                            width: double.infinity,
+                            // color: Colors.black,
+                            child: Center(
+                              child:ChartTypes().chartType[currentChartType] ,
+                            ),
+                          )
+
+                        ],
                       )
+
 
                         ],
                   );
@@ -173,6 +338,8 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
     );
+
+
   }
 }
 
